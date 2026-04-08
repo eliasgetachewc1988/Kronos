@@ -7,6 +7,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from model import Kronos, KronosTokenizer, KronosPredictor
 
+url = "https://api.twelvedata.com/time_series?apikey=3617d3ff0ca247aeaa7fcb04d0760b66&symbol=XAU/USD&interval=5min&outputsize=2500"
 
 def plot_prediction(kline_df, pred_df):
     pred_df.index = kline_df.index[-pred_df.shape[0]:]
@@ -37,7 +38,6 @@ model = Kronos.from_pretrained("NeoQuasar/Kronos-small")
 predictor = KronosPredictor(model, tokenizer, max_context=512)
 
 # 3. Prepare Data
-url = "https://api.twelvedata.com/time_series?apikey=3617d3ff0ca247aeaa7fcb04d0760b66&symbol=XAU/USD&interval=5min&outputsize=2500"
 data = requests.get(url).json()
 
 df = pd.DataFrame(data["values"])
