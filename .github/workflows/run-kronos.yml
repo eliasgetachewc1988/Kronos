@@ -24,7 +24,7 @@ jobs:
 
       - name: Run prediction and Save output
         run: |
-          python examples/prediction_example.py > output.txt
+          python examples/prediction_wo_vol_example.py > output.txt
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
