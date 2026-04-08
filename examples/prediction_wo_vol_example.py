@@ -40,20 +40,17 @@ predictor = KronosPredictor(model, tokenizer, max_context=512)
 url = "https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&apikey=3617d3ff0ca247aeaa7fcb04d0760b66"
 data = requests.get(url).json()
 
-df2 = pd.DataFrame(data["values"])
-df2 = df2[::-1]  # reverse order
+df = pd.DataFrame(data["values"])
+df = df[::-1]  # reverse order
 
-df2 = df2.rename(columns={'datetime':'timestamps'})
-
-df = pd.read_csv(df2.to_csv('output.csv', index=False))
-df['timestamps'] = pd.to_datetime(df['timestamps'])
+df['datetime'] = pd.to_datetime(df['datetime'])
 
 lookback = 400
 pred_len = 120
 
 x_df = df.loc[:lookback-1, ['open', 'high', 'low', 'close']]
-x_timestamp = df.loc[:lookback-1, 'timestamps']
-y_timestamp = df.loc[lookback:lookback+pred_len-1, 'timestamps']
+x_timestamp = df.loc[:lookback-1, 'datetime']
+y_timestamp = df.loc[lookback:lookback+pred_len-1, 'datetime']
 
 # 4. Make Prediction
 pred_df = predictor.predict(
