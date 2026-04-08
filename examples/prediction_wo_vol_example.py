@@ -1,10 +1,7 @@
-import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
-import os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
+sys.path.append("../")
 from model import Kronos, KronosTokenizer, KronosPredictor
 
 
@@ -37,20 +34,15 @@ model = Kronos.from_pretrained("NeoQuasar/Kronos-small")
 predictor = KronosPredictor(model, tokenizer, max_context=512)
 
 # 3. Prepare Data
-url = "https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&apikey=3617d3ff0ca247aeaa7fcb04d0760b66"
-data = requests.get(url).json()
-
-df = pd.DataFrame(data["values"])
-df = df[::-1]  # reverse order
-
-df['datetime'] = pd.to_datetime(df['datetime'])
+df = pd.read_csv("./data/XSHG_5min_600977.csv")
+df['timestamps'] = pd.to_datetime(df['timestamps'])
 
 lookback = 400
 pred_len = 120
 
 x_df = df.loc[:lookback-1, ['open', 'high', 'low', 'close']]
-x_timestamp = df.loc[:lookback-1, 'datetime']
-y_timestamp = df.loc[lookback:lookback+pred_len-1, 'datetime']
+x_timestamp = df.loc[:lookback-1, 'timestamps']
+y_timestamp = df.loc[lookback:lookback+pred_len-1, 'timestamps']
 
 # 4. Make Prediction
 pred_df = predictor.predict(
