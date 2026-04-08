@@ -43,14 +43,14 @@ data = requests.get(url).json()
 df = pd.DataFrame(data["values"])
 df = df[::-1]  # reverse order
 
-df['timestamps'] = pd.to_datetime(df['datetime'])
+df['datetime'] = pd.to_datetime(df['datetime'])
 
 lookback = 400
 pred_len = 120
 
 x_df = df.loc[:lookback-1, ['open', 'high', 'low', 'close']]
-x_timestamp = df.loc[:lookback-1, 'timestamps']
-y_timestamp = df.loc[lookback:lookback+pred_len-1, 'timestamps']
+x_timestamp = df.loc[:lookback-1, 'datetime']
+y_timestamp = df.loc[lookback:lookback+pred_len-1, 'datetime']
 
 # 4. Make Prediction
 pred_df = predictor.predict(
@@ -73,4 +73,3 @@ kline_df = df.loc[:lookback+pred_len-1]
 
 # visualize
 plot_prediction(kline_df, pred_df)
-
