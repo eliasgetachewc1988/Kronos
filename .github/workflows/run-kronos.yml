@@ -25,3 +25,13 @@ jobs:
       - name: Run prediction script
         run: |
           python examples/prediction_example.py
+
+      - name: Save output
+        run: |
+          python examples/prediction_example.py > output.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kronos-results
+          path: output.txt
