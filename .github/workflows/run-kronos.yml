@@ -22,6 +22,9 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV
+
       - name: Run prediction script
         run: |
           python examples/prediction_example.py
