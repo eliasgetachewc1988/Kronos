@@ -42,6 +42,9 @@ data = requests.get(url).json()
 
 df = pd.DataFrame(data["values"])
 df = df[::-1]  # reverse order
+
+df = df.rename(columns={'datetime':'timestamps'})
+
 df['timestamps'] = pd.to_datetime(df['timestamps'])
 
 lookback = 400
