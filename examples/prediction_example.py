@@ -1,10 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
-import os
-print(os.listdir())
 sys.path.append("../")
-print(os.listdir())
 from model import Kronos, KronosTokenizer, KronosPredictor
 
 
