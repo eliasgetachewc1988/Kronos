@@ -41,9 +41,9 @@ url = "https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&apike
 data = requests.get(url).json()
 
 df2 = pd.DataFrame(data["values"])
-df2 = df[::-1]  # reverse order
+df2 = df2[::-1]  # reverse order
 
-df2 = df.rename(columns={'datetime':'timestamps'})
+df2 = df2.rename(columns={'datetime':'timestamps'})
 
 df = pd.read_csv(df2.to_csv('output.csv', index=False))
 df['timestamps'] = pd.to_datetime(df['timestamps'])
