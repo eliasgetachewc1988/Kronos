@@ -52,6 +52,9 @@ x_df = df.loc[:lookback-1, ['open', 'high', 'low', 'close']]
 x_timestamp = df.loc[:lookback-1, 'datetime']
 y_timestamp = df.loc[lookback:lookback+pred_len-1, 'datetime']
 
+print("DF SHAPE:", df.shape)
+print(df.tail())
+
 # 4. Make Prediction
 pred_df = predictor.predict(
     df=x_df,
