@@ -22,11 +22,7 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run prediction script
-        run: |
-          python examples/prediction_example.py
-
-      - name: Save output
+      - name: Run prediction and Save output
         run: |
           python examples/prediction_example.py > output.txt
 
