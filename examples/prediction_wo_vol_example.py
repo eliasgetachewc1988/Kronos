@@ -34,7 +34,7 @@ tokenizer = KronosTokenizer.from_pretrained("NeoQuasar/Kronos-Tokenizer-base")
 model = Kronos.from_pretrained("NeoQuasar/Kronos-small")
 
 # 2. Instantiate Predictor
-predictor = KronosPredictor(model, tokenizer, device="cuda:0", max_context=512)
+predictor = KronosPredictor(model, tokenizer, max_context=512)
 
 # 3. Prepare Data
 url = "https://api.twelvedata.com/time_series?symbol=XAU/USD&interval=5min&apikey=3617d3ff0ca247aeaa7fcb04d0760b66"
