@@ -35,6 +35,7 @@ model = Kronos.from_pretrained("NeoQuasar/Kronos-small")
 
 # 2. Instantiate Predictor
 predictor = KronosPredictor(model, tokenizer, max_context=512)
+prediction = predictor.predict(df)
 
 # 3. Prepare Data
 url = "https://api.twelvedata.com/time_series?apikey=3617d3ff0ca247aeaa7fcb04d0760b66&symbol=XAU/USD&interval=5min&outputsize=2500"
@@ -73,3 +74,25 @@ kline_df = df.loc[:lookback+pred_len-1]
 
 # visualize
 plot_prediction(kline_df, pred_df)
+
+# Signal Engine
+current_price = df["close"].iloc[-1]
+predicted_price = prediction[-1]
+
+if predicted_price > current_price * 1.002:
+    signal = "BUY"
+elif predicted_price < current_price * 0.998:
+    signal = "SELL"
+else:
+    signal = "NO TRADE"
+
+# Signal Engine
+TOKEN = "5289027180:AAEFDR3KUWSn0MzhWpawQF5RFJZ7ar2fluY"
+CHAT_ID = "346632926"
+
+def send_signal(msg):
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    requests.post(url, data={"chat_id": CHAT_ID, "text": msg})
+
+# Send Signal
+send_signal(f"{signal} XAUUSD\nPrice: {current_price}")
