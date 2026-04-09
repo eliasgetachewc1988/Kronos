@@ -145,7 +145,7 @@ print("Forecasted Data Head:")
 print(pred_df.head())
 
 # Combine historical and forecasted data for plotting
-kline_df = df.loc[:lookback+pred_len-1]
+kline_df = df_m5.loc[:lookback+pred_len-1]
 
 # visualize
 plot_prediction(kline_df, pred_df)
@@ -158,14 +158,7 @@ elif bos_m5 == "BEARISH_BOS" and bos_h1 == "BEARISH_BOS":
 else:
     trend = "NO TRADE"
 
-# Signal Engine
-current_price = float(df["close"].iloc[-1])
-predicted_price = float(pred_df["close"].iloc[-1])
-
-current_time = df["datetime"].iloc[-1]
-predicted_time = y_timestamp.iloc[-1]
-
-bos = detect_bos(df)
+bos = detect_bos(df_m5)
 
 if signal == "BUY" and bos == "BULLISH_BOS":
     final_signal = "BUY"
@@ -174,7 +167,7 @@ elif signal == "SELL" and bos == "BEARISH_BOS":
 else:
     final_signal = "NO TRADE"
 
-sl, tp = calculate_sl_tp(df, final_signal)
+sl, tp = calculate_sl_tp(df_m5, final_signal)
 exit_time = estimate_exit_time(pred_df, tp, final_signal, y_timestamp)
 
 # Send Signal
