@@ -79,7 +79,9 @@ current_price = float(df["close"].iloc[-1])
 predicted_price = float(pred_df["close"].iloc[-1])
 
 current_time = df["datetime"].iloc[-1]
-predicted_time = pred_df["datetime"].iloc[-1]
+predicted_time = df["datetime"].iloc[-1]
+#FIX HERE
+#predicted_time = pred_df["datetime"].iloc[-1]
 
 if predicted_price > current_price * 1.002:
     signal = "BUY"
