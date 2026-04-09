@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import sys
 import os
+from datetime import timedelta
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from model import Kronos, KronosTokenizer, KronosPredictor
@@ -48,14 +49,23 @@ def detect_bos(df):
     else:
         return "NO_BOS"
 
-# SL / TP Calculation (ICT style light version)
-def calculate_sl_tp(df, signal):
+# SL / TP Calculation From Prediction
+def calculate_sl_tp_from_prediction(pred_df, current_price, signal):
+    pred_prices = pred_df["close"].astype(float).values
+
     if signal == "BUY":
-        sl = df['low'].iloc[-10:].min()
-        tp = df['close'].iloc[-1] + (df['close'].iloc[-1] - sl) * 2
+        tp = max(pred_prices)
+
+        # SL = lowest dip before TP is reached
+        tp_index = pred_prices.argmax()
+        sl = min(pred_prices[:tp_index+1]) if tp_index > 0 else current_price * 0.998
+
     elif signal == "SELL":
-        sl = df['high'].iloc[-10:].max()
-        tp = df['close'].iloc[-1] - (sl - df['close'].iloc[-1]) * 2
+        tp = min(pred_prices)
+
+        tp_index = pred_prices.argmin()
+        sl = max(pred_prices[:tp_index+1]) if tp_index > 0 else current_price * 1.002
+
     else:
         return None, None
 
@@ -72,13 +82,20 @@ def get_data(interval):
     return df
 
 #Predicted Exit Time
-def estimate_exit_time(pred_df, tp, signal, y_timestamp):
-    for i, price in enumerate(pred_df["close"]):
+def build_future_timestamps(last_time, steps, interval_minutes=5):
+    return [last_time + timedelta(minutes=interval_minutes * (i+1)) for i in range(steps)]
+
+#Predicted Exit Time
+def estimate_exit_time(pred_df, tp, signal, future_timestamps):
+    pred_prices = pred_df["close"].astype(float).values
+
+    for i, price in enumerate(pred_prices):
         if signal == "BUY" and price >= tp:
-            return y_timestamp.iloc[i]
+            return future_timestamps[i]
         elif signal == "SELL" and price <= tp:
-            return y_timestamp.iloc[i]
-    return y_timestamp.iloc[-1]
+            return future_timestamps[i]
+
+    return future_timestamps[-1]
 
 #Modify Plot
 def plot_and_save(kline_df, pred_df):
@@ -184,9 +201,12 @@ bos_h1 = detect_bos(df_h1)
 lookback = 400
 pred_len = 120
 
+last_time = df_m5["datetime"].iloc[-1]
+y_timestamp = build_future_timestamps(last_time, pred_len, interval_minutes=5)
+
 x_df = df_m5.iloc[:lookback][['open', 'high', 'low', 'close']]
 x_timestamp = df_m5.iloc[:lookback]['datetime']
-y_timestamp = df_m5.iloc[lookback:lookback+pred_len]['datetime']
+y_timestamp = build_future_timestamps(last_time, pred_len, interval_minutes=5)
 
 # 4. Make Prediction
 pred_df = predictor.predict(
@@ -232,8 +252,20 @@ elif trend == "SELL" and bos == "BEARISH_BOS":
 else:
     final_signal = "NO TRADE"
 
-sl, tp = calculate_sl_tp(df_m5, final_signal)
-exit_time = estimate_exit_time(pred_df, tp, final_signal, y_timestamp)
+sl, tp = calculate_sl_tp_from_prediction(pred_df, current_price, final_signal)
+
+exit_time = estimate_exit_time(
+    pred_df,
+    tp,
+    final_signal,
+    y_timestamp
+)
+
+if final_signal == "BUY" and tp <= current_price:
+    final_signal = "NO TRADE"
+
+if final_signal == "SELL" and tp >= current_price:
+    final_signal = "NO TRADE"
 
 # Confidence Signal
 confidence = calculate_confidence(
