@@ -202,11 +202,11 @@ lookback = 400
 pred_len = 120
 
 last_time = df_m5["datetime"].iloc[-1]
-y_timestamp = build_future_timestamps(last_time, pred_len, interval_minutes=5)
+yf_timestamp = build_future_timestamps(last_time, pred_len, interval_minutes=5)
 
 x_df = df_m5.iloc[:lookback][['open', 'high', 'low', 'close']]
 x_timestamp = df_m5.iloc[:lookback]['datetime']
-y_timestamp = build_future_timestamps(last_time, pred_len, interval_minutes=5)
+y_timestamp = df_m5.iloc[lookback:lookback+pred_len]['datetime']
 
 # 4. Make Prediction
 pred_df = predictor.predict(
@@ -258,7 +258,7 @@ exit_time = estimate_exit_time(
     pred_df,
     tp,
     final_signal,
-    y_timestamp
+    yf_timestamp
 )
 
 if final_signal == "BUY" and tp <= current_price:
