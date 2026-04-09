@@ -97,4 +97,4 @@ def send_signal(msg):
     requests.post(url, data={"chat_id": CHAT_ID, "text": msg})
 
 # Send Signal
-send_signal(f"{signal} XAUUSD\nPrice: {current_price}\nCurrent Time: {current_time}\nPredicted Time: {predicted_time}")
+send_signal(f"{signal} XAUUSD\nCurrent Price: {current_price}\nPredicted Price: {predicted_price}\nCurrent Time: {current_time}\nPredicted Time: {predicted_time}")
