@@ -75,8 +75,8 @@ kline_df = df.loc[:lookback+pred_len-1]
 plot_prediction(kline_df, pred_df)
 
 # Signal Engine
-current_price = df["close"].iloc[-1]
-predicted_price = pred_df["close"].iloc[-1]
+current_price = float(df["close"].iloc[-1])
+predicted_price = float(pred_df["close"].iloc[-1])
 
 if predicted_price > current_price * 1.002:
     signal = "BUY"
