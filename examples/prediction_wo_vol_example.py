@@ -37,7 +37,7 @@ model = Kronos.from_pretrained("NeoQuasar/Kronos-small")
 predictor = KronosPredictor(model, tokenizer, max_context=512)
 
 # 3. Prepare Data
-url = "https://api.twelvedata.com/time_series?apikey=3617d3ff0ca247aeaa7fcb04d0760b66&symbol=XAU/USD&interval=5min&outputsize=500&timezone=Africa/Nairobi"
+url = "https://api.twelvedata.com/time_series?apikey=3617d3ff0ca247aeaa7fcb04d0760b66&symbol=XAU/USD&interval=5min&outputsize=2500&timezone=Africa/Nairobi"
 data = requests.get(url).json()
 
 df = pd.DataFrame(data["values"])
@@ -79,9 +79,7 @@ current_price = float(df["close"].iloc[-1])
 predicted_price = float(pred_df["close"].iloc[-1])
 
 current_time = df["datetime"].iloc[-1]
-predicted_time = df["datetime"].iloc[-1]
-#FIX HERE
-#predicted_time = pred_df["datetime"].iloc[-1]
+predicted_time = y_timestamp.iloc[-1]
 
 if predicted_price > current_price * 1.002:
     signal = "BUY"
