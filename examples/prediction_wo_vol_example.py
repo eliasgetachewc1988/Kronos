@@ -41,7 +41,7 @@ url = "https://api.twelvedata.com/time_series?apikey=3617d3ff0ca247aeaa7fcb04d07
 data = requests.get(url).json()
 
 df = pd.DataFrame(data["values"])
-df = df[::-1]  # reverse order
+df = df[::-1].reset_index(drop=True)  # reverse order
 
 df = df.rename(columns={"datetime": "timestamps"})
 
