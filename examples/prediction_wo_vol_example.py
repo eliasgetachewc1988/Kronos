@@ -96,6 +96,66 @@ def plot_and_save(kline_df, pred_df):
 
     return file_path
 
+#Confidence Engine
+def calculate_confidence(current_price, predicted_price, bos_m5, bos_h1, sl, tp, signal):
+    score = 0
+    max_score = 100
+
+    # 1. Prediction Strength (0–40)
+    move_pct = abs(predicted_price - current_price) / current_price
+
+    if move_pct > 0.003:  # strong move
+        score += 40
+    elif move_pct > 0.002:
+        score += 30
+    elif move_pct > 0.001:
+        score += 20
+    else:
+        score += 10
+
+    # 2. BOS Alignment (0–25)
+    if signal == "BUY" and bos_m5 == "BULLISH_BOS":
+        score += 12
+    if signal == "SELL" and bos_m5 == "BEARISH_BOS":
+        score += 12
+
+    if signal == "BUY" and bos_h1 == "BULLISH_BOS":
+        score += 13
+    if signal == "SELL" and bos_h1 == "BEARISH_BOS":
+        score += 13
+
+    # 3. Risk Reward Quality (0–20)
+    if sl is not None and tp is not None:
+        risk = abs(current_price - sl)
+        reward = abs(tp - current_price)
+
+        if risk > 0:
+            rr = reward / risk
+            if rr >= 2:
+                score += 20
+            elif rr >= 1.5:
+                score += 15
+            elif rr >= 1:
+                score += 10
+
+    # 4. Signal Agreement (0–15)
+    if signal != "NO TRADE":
+        score += 15
+
+    confidence = min(round(score, 2), 100)
+    return confidence
+
+#Confidence Tiers
+def confidence_label(conf):
+    if conf >= 80:
+        return "🔥 HIGH PROBABILITY"
+    elif conf >= 65:
+        return "⚡ MEDIUM"
+    elif conf >= 50:
+        return "⚠️ LOW"
+    else:
+        return "❌ AVOID"
+
 #Send message to Telegram
 def send_signal(msg):
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
@@ -152,6 +212,7 @@ plot_prediction(kline_df, pred_df)
 
 # Signal Engine
 current_price = float(df_m5["close"].iloc[-1])
+predicted_price = float(pred_df["close"].iloc[-1])
 current_time = df_m5["datetime"].iloc[-1]
 
 # Confirmation rule
@@ -174,12 +235,31 @@ else:
 sl, tp = calculate_sl_tp(df_m5, final_signal)
 exit_time = estimate_exit_time(pred_df, tp, final_signal, y_timestamp)
 
+# Confidence Signal
+confidence = calculate_confidence(
+    current_price,
+    predicted_price,
+    bos_m5,
+    bos_h1,
+    sl,
+    tp,
+    final_signal
+)
+
+if confidence < 60:
+    final_signal = "NO TRADE"
+    
+label = confidence_label(confidence)
+
 # Send Signal
 msg = f"""
 🚀 XAUUSD SIGNAL
 
 Signal: {final_signal}
-Entry: {current_price}
+Confidence: {confidence}% ({label})
+
+Current Price/Entry: {current_price}
+Predicted Price: {predicted_price}
 
 SL: {sl}
 TP: {tp}
