@@ -150,6 +150,10 @@ kline_df = df_m5.loc[:lookback+pred_len-1]
 # visualize
 plot_prediction(kline_df, pred_df)
 
+# Signal Engine
+current_price = float(df["close"].iloc[-1])
+current_time = df["datetime"].iloc[-1]
+
 # Confirmation rule
 if bos_m5 == "BULLISH_BOS" and bos_h1 == "BULLISH_BOS":
     trend = "BUY"
