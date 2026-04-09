@@ -43,16 +43,14 @@ data = requests.get(url).json()
 df = pd.DataFrame(data["values"])
 df = df[::-1].reset_index(drop=True)  # reverse order
 
-df = df.rename(columns={"datetime": "timestamps"})
-
-df['timestamps'] = pd.to_datetime(df['timestamps'])
+df['datetime'] = pd.to_datetime(df['datetime'])
 
 lookback = 400
 pred_len = 120
 
-x_df = df.loc[:lookback-1, ['open', 'high', 'low', 'close']]
-x_timestamp = df.loc[:lookback-1, 'timestamps']
-y_timestamp = df.loc[lookback:lookback+pred_len-1, 'timestamps']
+x_df = df.iloc[:lookback][['open', 'high', 'low', 'close']]
+x_timestamp = df.iloc[:lookback]['datetime']
+y_timestamp = df.iloc[lookback:lookback+pred_len]['datetime']
 
 # 4. Make Prediction
 pred_df = predictor.predict(
