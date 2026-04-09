@@ -35,7 +35,6 @@ model = Kronos.from_pretrained("NeoQuasar/Kronos-small")
 
 # 2. Instantiate Predictor
 predictor = KronosPredictor(model, tokenizer, max_context=512)
-prediction = predictor.predict(df)
 
 # 3. Prepare Data
 url = "https://api.twelvedata.com/time_series?apikey=3617d3ff0ca247aeaa7fcb04d0760b66&symbol=XAU/USD&interval=5min&outputsize=2500"
@@ -74,6 +73,9 @@ kline_df = df.loc[:lookback+pred_len-1]
 
 # visualize
 plot_prediction(kline_df, pred_df)
+
+#prediction
+prediction = predictor.predict(df)
 
 # Signal Engine
 current_price = df["close"].iloc[-1]
