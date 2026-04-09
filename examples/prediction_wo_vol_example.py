@@ -296,6 +296,9 @@ Predicted Price: {predicted_price}
 SL: {sl}
 TP: {tp}
 
+5m BOS: {bos_m5}
+1h BOS: {bos_h1}
+
 Current Time: {current_time}
 Estimated Exit: {exit_time}
 """
