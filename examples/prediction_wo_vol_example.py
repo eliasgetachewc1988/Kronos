@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 import sys
 import os
 
+TWELVE_API_KEY = os.getenv("TWELVE_API_KEY")
+TG_CHAT_ID = os.getenv("TG_CHAT_ID")
+TG_BOT_API = os.getenv("TG_BOT_API")
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from model import Kronos, KronosTokenizer, KronosPredictor
 
@@ -37,7 +41,7 @@ model = Kronos.from_pretrained("NeoQuasar/Kronos-small")
 predictor = KronosPredictor(model, tokenizer, max_context=512)
 
 # 3. Prepare Data
-url = "https://api.twelvedata.com/time_series?apikey=3617d3ff0ca247aeaa7fcb04d0760b66&symbol=XAU/USD&interval=5min&outputsize=2500&timezone=Africa/Nairobi"
+url = "https://api.twelvedata.com/time_series?apikey="+TWELVE_API_KEY+"&symbol=XAU/USD&interval=5min&outputsize=500&timezone=Africa/Nairobi"
 data = requests.get(url).json()
 
 df = pd.DataFrame(data["values"])
@@ -91,12 +95,9 @@ else:
     signal = "NO TRADE"
 
 # Signal Engine
-TOKEN = "5289027180:AAEFDR3KUWSn0MzhWpawQF5RFJZ7ar2fluY"
-CHAT_ID = "346632926"
-
 def send_signal(msg):
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-    requests.post(url, data={"chat_id": CHAT_ID, "text": msg})
+    url = f"https://api.telegram.org/bot{TG_BOT_API}/sendMessage"
+    requests.post(url, data={"chat_id": TG_CHAT_ID, "text": msg})
 
 # Send Signal
 send_signal(f"{signal} XAUUSD\nCurrent Price: {current_price}\nPredicted Price: {predicted_price}\nCurrent Time: {current_time}\nPredicted Time: {predicted_time}")
