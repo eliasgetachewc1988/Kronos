@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import sys
 import os
 
-TWELVE_API_KEY = os.getenv("TWELVE_API_KEY")
-TG_CHAT_ID = os.getenv("TG_CHAT_ID")
-TG_BOT_API = os.getenv("TG_BOT_API")
+TWELVE_API_KEY = str(os.getenv("TWELVE_API_KEY"))
+TG_CHAT_ID = str(os.getenv("TG_CHAT_ID"))
+TG_BOT_API = str(os.getenv("TG_BOT_API"))
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from model import Kronos, KronosTokenizer, KronosPredictor
