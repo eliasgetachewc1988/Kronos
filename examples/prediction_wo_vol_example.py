@@ -160,9 +160,9 @@ else:
 
 bos = detect_bos(df_m5)
 
-if signal == "BUY" and bos == "BULLISH_BOS":
+if trend == "BUY" and bos == "BULLISH_BOS":
     final_signal = "BUY"
-elif signal == "SELL" and bos == "BEARISH_BOS":
+elif trend == "SELL" and bos == "BEARISH_BOS":
     final_signal = "SELL"
 else:
     final_signal = "NO TRADE"
