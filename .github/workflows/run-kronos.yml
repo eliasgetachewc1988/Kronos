@@ -2,8 +2,8 @@ name: Run Kronos AI
 
 on:
   workflow_dispatch:   # manual trigger
-  #schedule:
-    #- cron: "*/30 * * * *"  # every 30 min
+  schedule:
+    - cron: "*/15 * * * *"  # every 15 min
 
 jobs:
   run-kronos:
@@ -22,12 +22,6 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run prediction and Save output
+      - name: Run prediction
         run: |
-          python examples/prediction_wo_vol_example.py > output.txt
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: kronos-results
-          path: output.txt
+          python examples/prediction_wo_vol_example.py
