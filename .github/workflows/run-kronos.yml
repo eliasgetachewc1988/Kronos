@@ -3,7 +3,7 @@ name: Run Kronos AI
 on:
   workflow_dispatch:   # manual trigger
   schedule:
-    - cron: "*/30 * * * *"  # every 30 min
+    #- cron: "*/30 * * * *"  # every 30 min
 
 jobs:
   run-kronos:
