@@ -113,6 +113,31 @@ def plot_and_save(kline_df, pred_df):
 
     return file_path
 
+def plot_prediction2(kline_df, pred_df):
+    pred_df.index = kline_df.index[-pred_df.shape[0]:]
+    sr_close = kline_df['close']
+    sr_pred_close = pred_df['close']
+    sr_close.name = 'Ground Truth'
+    sr_pred_close.name = "Prediction"
+
+    close_df = pd.concat([sr_close, sr_pred_close], axis=1)
+
+    fig, ax = plt.subplots(1, 1, figsize=(8, 4))
+
+    ax.plot(close_df['Ground Truth'], label='Ground Truth', color='blue', linewidth=1.5)
+    ax.plot(close_df['Prediction'], label='Prediction', color='red', linewidth=1.5)
+    ax.set_ylabel('Close Price', fontsize=14)
+    ax.legend(loc='lower left', fontsize=12)
+    ax.grid(True)
+
+    plt.tight_layout()
+
+    file_path = "chart.png"
+    plt.savefig(file_path)
+    plt.close()
+
+    return file_path
+
 #Confidence Engine
 def calculate_confidence(current_price, predicted_price, bos_m5, bos_h1, sl, tp, signal):
     score = 0
@@ -305,5 +330,5 @@ Estimated Exit: {exit_time}
 
 send_signal(msg)
 
-chart_path = plot_and_save(kline_df, pred_df)
+chart_path = plot_prediction2(kline_df, pred_df)
 send_photo(chart_path)
