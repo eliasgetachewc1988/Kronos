@@ -76,7 +76,6 @@ def get_data(interval):
     url = f"https://api.twelvedata.com/time_series?apikey={TWELVE_DATA_API}&symbol=XAU/USD&interval={interval}&outputsize=2500&timezone=Africa/Nairobi"
     data = requests.get(url).json()
     df = pd.DataFrame(data["values"])
-    df = df[::-1].reset_index(drop=True)  # reverse order
     df['datetime'] = pd.to_datetime(df['datetime'])
     df[['open','high','low','close']] = df[['open','high','low','close']].astype(float)
     return df
