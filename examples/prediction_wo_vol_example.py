@@ -73,7 +73,7 @@ def calculate_sl_tp_from_prediction(pred_df, current_price, signal):
 
 #Multi-Timeframe Confirmation (M5 + H1)
 def get_data(interval):
-    url = f"https://api.twelvedata.com/time_series?apikey={TWELVE_DATA_API}&symbol=XAU/USD&interval={interval}&outputsize=1000&timezone=Africa/Nairobi"
+    url = f"https://api.twelvedata.com/time_series?apikey={TWELVE_DATA_API}&symbol=XAU/USD&interval={interval}&outputsize=2500&timezone=Africa/Nairobi"
     data = requests.get(url).json()
     df = pd.DataFrame(data["values"])
     df = df[::-1].reset_index(drop=True)  # reverse order
